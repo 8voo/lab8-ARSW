@@ -27,21 +27,26 @@ var app = (function () {
         };
     };
 
+    var messiCallback = function(theObject){
+        var point = JSON.parse(theObject.body)
+        console.log(point.x, point.y)
+        addPointToCanvas(point)
+        
+    }
+
+    //canvas.addEventListener('click', messiCallback(getMousePosition()));
 
     var connectAndSubscribe = function () {
         console.info('Connecting to WS...');
         var socket = new SockJS('/stompendpoint');
         stompClient = Stomp.over(socket);
+
         
         //subscribe to /topic/TOPICXX when connections succeed
         stompClient.connect({}, function (frame) {
             console.log('Connected: ' + frame);
             stompClient.subscribe('/topic/newpoint', function (ola) {
-                var theObject=JSON.parse(ola.body);
-                var pointX = theObject.x;
-                var pointY = theObject.y;
-                alert("x: " + pointX + "  y: " + pointY);
-                
+                messiCallback(ola);
             });
         });
 
@@ -56,6 +61,10 @@ var app = (function () {
             
             //websocket connection
             connectAndSubscribe();
+            document.getElementById("canvas").addEventListener("click", function(e){
+                var point = getMousePosition(e);
+                app.publishPoint(point.x, point.y)
+            })
         },
 
         publishPoint: function(px,py){
@@ -64,7 +73,7 @@ var app = (function () {
             addPointToCanvas(pt);
 
             //publicar el evento
-            stompClient.send("/topic/newpoint", {}, JSON.stringify({x:px,y:py}));
+            
             stompClient.send("/topic/newpoint", {}, JSON.stringify(pt)); 
         },
 
