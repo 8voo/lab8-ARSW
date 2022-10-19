@@ -27,9 +27,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <link rel="stylesheet" href="styles.css" type="text/css">
     </head>
     
-    <body onload="app.init()">
+    <body>
         X:<input id="x" type="number"/>
         Y:<input id="y" type="number"/>        
+        NUM:<input id="num" type="number"/>        
+        <button onclick="app.connect($('#num').val())"> Connect</button>
         <button onclick="app.publishPoint($('#x').val(),$('#y').val())">Send point</button>
         <canvas id="canvas" width="800" height="600"></canvas>
     </body>
